@@ -21,7 +21,7 @@ Murmur is an open-source starter kit for voice AI apps. Speak into your micropho
 ## Quick start
 
 ```
-git clone https://github.com/YOUR-USERNAME/murmur-voice.git
+git clone https://github.com/zioss95/murmur-voice.git
 cd murmur-voice
 npm install
 ```
