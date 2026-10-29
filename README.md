@@ -12,7 +12,7 @@ Requirements
 • SoX for microphone recording
 • A free Groq API key
 Quick start
-git clone https://github.com/YOUR-USERNAME/murmur-voice.git
+git clone https://github.com/zioss95/murmur-voice.git
 cd murmur-voice
 npm install
 Install SoX (Windows):
