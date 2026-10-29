@@ -147,3 +147,5 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+recording.wav
+input.mp3
