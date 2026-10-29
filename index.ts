@@ -2,7 +2,7 @@ import "dotenv/config";
 import OpenAI from "openai";
 import fs from "node:fs";
 import readline from "node:readline/promises";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 
 const client = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
@@ -22,7 +22,6 @@ const rl = readline.createInterface({
 async function record(): Promise<void> {
   await rl.question("Press Enter to start recording...");
 
-  // Launch SoX directly, using the device that worked in your test
   const sox = spawn("sox", [
     "-t", "waveaudio", MIC_DEVICE,
     "-r", "16000",
@@ -37,6 +36,17 @@ async function record(): Promise<void> {
 
   sox.kill();
   await closed;
+}
+
+// The voice: speak text out loud using the built-in Windows voice
+function speak(text: string) {
+  // Remove characters that could confuse PowerShell
+  const clean = text.replace(/["'`$\n\r]/g, " ");
+  const script =
+    "Add-Type -AssemblyName System.Speech; " +
+    "$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; " +
+    "$s.Speak('" + clean + "')";
+  spawnSync("powershell", ["-NoProfile", "-Command", script], { stdio: "ignore" });
 }
 
 async function main() {
@@ -56,11 +66,16 @@ async function main() {
     const chat = await client.chat.completions.create({
       model: CHAT_MODEL,
       messages: [
-        { role: "system", content: "You are Murmur, a friendly, concise voice assistant." },
+        { role: "system", content: "You are Murmur, a friendly voice assistant. Keep replies to one or two short sentences, in plain text with no lists or symbols." },
         { role: "user", content: heard.text },
       ],
     });
-    console.log("Murmur:", chat.choices[0].message.content ?? "");
+
+    const reply = chat.choices[0].message.content ?? "";
+    console.log("Murmur:", reply);
+
+    // The voice
+    speak(reply);
   }
 }
 
