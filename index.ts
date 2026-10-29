@@ -32,7 +32,7 @@ async function record(): Promise<boolean> {
     "-c", "1",
     "-b", "16",
     AUDIO_FILE,
-    "silence", "1", "0.1", "3%", "1", "0.8", "3%",
+    "silence", "1", "0.1", "1%", "1", "0.8", "3%",
   ]);
 
   // Safety net: never record longer than 30 seconds
