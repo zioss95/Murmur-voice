@@ -1,7 +1,6 @@
 import "dotenv/config";
 import OpenAI from "openai";
 import fs from "node:fs";
-import readline from "node:readline/promises";
 import { spawn, spawnSync } from "node:child_process";
 
 const client = new OpenAI({
@@ -15,13 +14,10 @@ const AUDIO_FILE = "recording.wav";
 const MIC_DEVICE = "0";
 const GITHUB_URL = "https://github.com/zioss95";
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
-async function record(): Promise<void> {
-  await rl.question("Press Enter to start recording...");
+// The ears, hands-free: waits for speech, stops when you go quiet
+async function record(): Promise<boolean> {
+  if (fs.existsSync(AUDIO_FILE)) fs.unlinkSync(AUDIO_FILE);
 
   const sox = spawn("sox", [
     "-t", "waveaudio", MIC_DEVICE,
@@ -29,16 +25,18 @@ async function record(): Promise<void> {
     "-c", "1",
     "-b", "16",
     AUDIO_FILE,
+    "silence", "1", "0.1", "3%", "1", "0.8", "3%",
   ]);
 
-  const closed = new Promise<void>((resolve) => sox.on("close", () => resolve()));
+  // Safety net: never record longer than 30 seconds
+  const limit = setTimeout(() => sox.kill(), 30000);
 
-  await rl.question("Recording... press Enter to stop.");
+  await new Promise<void>((resolve) => sox.on("close", () => resolve()));
+  clearTimeout(limit);
 
-  sox.kill();
-  await closed;
+  // True only if we captured a real recording
+  return fs.existsSync(AUDIO_FILE) && fs.statSync(AUDIO_FILE).size > 20000;
 }
-
 // The voice: speak text out loud using the built-in Windows voice
 function speak(text: string) {
   const clean = text.replace(/["'`$\n\r]/g, " ");
@@ -145,20 +143,31 @@ async function think(userText: string): Promise<string> {
 }
 
 async function main() {
-  console.log("Murmur is alive. Press Ctrl+C to quit.");
+  console.log("Murmur is listening. Just start talking. Press Ctrl+C to quit.");
+  console.log("Tip: say goodbye or stop to end the session.");
 
   while (true) {
-    await record();
+    console.log("\nListening...");
+    const gotAudio = await record();
+    if (!gotAudio) continue;
 
     // The ears
     const heard = await client.audio.transcriptions.create({
       file: fs.createReadStream(AUDIO_FILE),
       model: EARS_MODEL,
     });
-    console.log("You said:", heard.text);
+    const text = heard.text.trim();
+    if (text.length < 2) continue;
+    console.log("You said:", text);
+
+    // Spoken way to quit
+    if (/^(goodbye|stop|quit|exit)\W*$/i.test(text)) {
+      speak("Goodbye!");
+      process.exit(0);
+    }
 
     // The brain, with actions
-    const reply = await think(heard.text);
+    const reply = await think(text);
     console.log("Murmur:", reply);
 
     // The voice
