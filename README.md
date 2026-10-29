@@ -1,2 +1,2 @@
 # Murmur-voice
-Build a voice assistant in minutes, not weeks. Open-source starter kit for building voice AI apps in minutes." That covers three things: it's open source, it's a starter kit, and it's for voice AI.
+Murmur is coming soon. Star this repo to follow along as we build the easiest way to add voice to your AI apps.
