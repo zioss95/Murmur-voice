@@ -74,3 +74,20 @@ MIT
 ## Support the project
 
 If Murmur saves you time, give it a star on GitHub. It helps more people find it.
+## Murmur Pro
+
+Murmur is free and open source. **Murmur Pro** is coming for teams and businesses who want to ship faster:
+
+- User login and accounts
+- Billing and subscriptions, already wired up
+- Admin dashboard with usage stats
+- Conversation history
+- Multiple voices and languages
+- One-click deployment templates
+- Priority support
+
+[Join the Pro waitlist](https://forms.gle/V9DbPyBYgsHWAmDs5)
+
+## Sponsor
+
+If Murmur helps you, you can support its development through [GitHub Sponsors](https://github.com/sponsors/zioss95).
