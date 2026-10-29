@@ -1,38 +1,36 @@
 import "dotenv/config";
 import OpenAI from "openai";
-import readline from "node:readline/promises";
+import fs from "node:fs";
 
 const client = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
   baseURL: "https://api.groq.com/openai/v1",
 });
 
-const MODEL = "openai/gpt-oss-20b";
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const CHAT_MODEL = "openai/gpt-oss-20b";
+const EARS_MODEL = "whisper-large-v3";
+const AUDIO_FILE = "input.mp3";
 
 async function main() {
-  console.log("Murmur is alive. Type a message, or type 'exit' to quit.");
+  console.log("Murmur is listening to", AUDIO_FILE);
 
-  while (true) {
-    const text = await rl.question("You: ");
-    if (text.trim().toLowerCase() === "exit") break;
+  // The ears: speech to text
+  const heard = await client.audio.transcriptions.create({
+    file: fs.createReadStream(AUDIO_FILE),
+    model: EARS_MODEL,
+  });
+  console.log("You said:", heard.text);
 
-    const chat = await client.chat.completions.create({
-      model: MODEL,
-      messages: [
-        { role: "system", content: "You are Murmur, a friendly, concise voice assistant." },
-        { role: "user", content: text },
-      ],
-    });
+  // The brain: chat reply
+  const chat = await client.chat.completions.create({
+    model: CHAT_MODEL,
+    messages: [
+      { role: "system", content: "You are Murmur, a friendly, concise voice assistant." },
+      { role: "user", content: heard.text },
+    ],
+  });
 
-    console.log("Murmur:", chat.choices[0].message.content ?? "");
-  }
-
-  rl.close();
+  console.log("Murmur:", chat.choices[0].message.content ?? "");
 }
 
 main();
