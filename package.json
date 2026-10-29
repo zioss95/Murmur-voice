@@ -1,0 +1,26 @@
+{
+  "name": "murmur-voice",
+  "version": "1.0.0",
+  "description": "Murmur is coming soon. Star this repo to follow along as we build the easiest way to add voice to your AI apps.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zioss95/Murmur-voice.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zioss95/Murmur-voice/issues"
+  },
+  "homepage": "https://github.com/zioss95/Murmur-voice#readme",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
