@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "dotenv": "^18.0.9",
+    "node-edge-tts": "^1.2.12",
     "node-record-lpcm16": "^1.0.1",
     "openai": "^7.45.1"
   }

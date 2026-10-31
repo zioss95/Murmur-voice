@@ -149,3 +149,5 @@ vite.config.ts.timestamp-*
 .turbo
 recording.wav
 input.mp3
+reply.mp3
+recording.wav
